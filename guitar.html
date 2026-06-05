@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guitar</title>
+    <link rel="stylesheet" href="guitar.css">
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="Services.html">Services</a></li>
+            <li><a href="Contact.html">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="Instructions">
+        <ul>
+
+          <li>A : string1</li>
+          <li>S : string2</li>
+          <li>D : string3</li>
+          <li>F : string4</li>
+          <li>G : string5</li>
+        </ul>
+    
+    </div>
+    <div class="guitar">
+        <!-- Headstock -->
+        <div class="headstock"></div>
+
+        <!-- Neck -->
+        <div class="neck"></div>
+
+        <!-- Strings -->
+        <div class="strings">
+            <div class="string" id="string1" onclick="playSound('string1')" data-sound="Sounds/String1.wav"></div>
+            <div class="string" id="string2" onclick="playSound('string2')" data-sound="Sounds/String2.wav"></div>
+            <div class="string" id="string3" onclick="playSound('string3')" data-sound="Sounds/String3.wav"></div>
+            <div class="string" id="string4" onclick="playSound('string4')" data-sound="Sounds/String4.wav"></div>
+            <div class="string" id="string5" onclick="playSound('string5')" data-sound="Sounds/String5.wav"></div>
+        </div>
+
+        <!-- Body -->
+        <div class="body">
+            <div class="soundhole"></div>
+        </div>
+    </div>
+    <audio id="String1" src="Sounds/String1.wav" hidden preload="auto"></audio>
+    <audio id="String2" src="Sounds/String2.wav" hidden preload="auto"></audio>
+    <audio id="String3" src="Sounds/String3.wav" hidden preload="auto"></audio>
+    <audio id="String4" src="Sounds/String4.wav" hidden preload="auto"></audio>
+    <audio id="String5" src="Sounds/String5.wav" hidden preload="auto"></audio>
+
+    <script src="guitar.js" ></script>
+     <!-- Footer Section -->
+     <div class="footer">
+        <p>&copy; 2024 My Website | All rights reserved.</p>
+    </div>
+</body>
+</html>

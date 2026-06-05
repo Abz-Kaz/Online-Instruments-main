@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drums</title>
+    <link rel="stylesheet" href="drums.css">
+    <script src="drums.js"></script>
+</head>
+    <body>
+        <nav class="navbar">
+            <ul class="nav-list">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="Services.html">Services</a></li>
+                <li><a href="Contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="Instructions">
+        <ul>
+            <li>A : Kick</li>
+            <li>S : Snare</li>
+            <li>D : Hihat</li>
+            <li>F : Tom1</li>
+            <li>G : Tom2</li>
+            <li>H : Tom3</li>
+           <li> J : Crash1</li>
+            <li>K : Crash2</li>
+            <li>L : Kick2</li>
+        </ul>
+        </div>
+        <div class="drumkit">
+            <div onclick="playSound('crash1')" style="cursor: pointer;" class="drum cymbal crash-left">Crash</div>
+            <div onclick="playSound('tom1')" style="cursor: pointer;" class="drum tom tom1">Tom 1</div>
+            <div onclick="playSound('tom2')" style="cursor: pointer;" class="drum tom tom2">Tom 2</div>
+            <div onclick="playSound('tom3')" style="cursor: pointer;" class="drum tom tom3">Tom 3</div>
+            <div onclick="playSound('crash2')" style="cursor: pointer;" class="drum cymbal crash-right">Crash</div>
+            <div onclick="playSound('hihat')" style="cursor: pointer;" class="drum hihat">Hi-Hat</div>
+            <div onclick="playSound('snare')" style="cursor: pointer;" class="drum snare">Snare</div>
+            <div onclick="playSound('kick')" style="cursor: pointer;" class="drum kick kick-left">Kick</div>
+            <div onclick="playSound('kick2')" style="cursor: pointer;" class="drum kick kick-right">Kick</div>
+        </div>
+        
+        <audio id="kick" src="Drums-aud/kick.wav" hidden preload="auto"></audio>
+        <audio id="kick2" src="Drums-aud/kick.wav" hidden preload="auto"></audio>
+        <audio id="snare" src="Drums-aud/snare.wav" hidden preload="auto"></audio>
+        <audio id="hihat" src="Drums-aud/hihat.wav" hidden preload="auto"></audio>
+        <audio id="tom1" src="Drums-aud/tom1.wav" hidden preload="auto"></audio>
+        <audio id="tom2" src="Drums-aud/tom2.wav" hidden preload="auto"></audio>
+        <audio id="tom3" src="Drums-aud/tom3.wav" hidden preload="auto"></audio>
+        <audio id="crash1" src="Drums-aud/crash1.wav" hidden preload="auto"></audio>
+        <audio id="crash2" src="Drums-aud/crash2.wav" hidden preload="auto"></audio>
+        
+        
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>&copy; 2024 My Website | All rights reserved.</p>
+    </div>
+    </body> 
+        </html>

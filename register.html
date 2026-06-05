@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Rhythm Realm</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/api/placeholder/1200/800');
+      background-size: cover;
+      background-position: center;
+      padding: 20px 0;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1200px;
+      width: 100%;
+      padding: 20px;
+    }
+    
+    .register-container {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 450px;
+      padding: 30px;
+    }
+    
+    .register-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    
+    .register-header h1 {
+      color: #4a148c;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    
+    .register-header p {
+      color: #606770;
+      font-size: 16px;
+    }
+    
+    .register-form {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #dddfe2;
+      border-radius: 6px;
+      font-size: 16px;
+      color: #1c1e21;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus {
+      border-color: #4a148c;
+      box-shadow: 0 0 0 2px rgba(74, 20, 140, 0.2);
+    }
+    
+    .form-group input::placeholder {
+      color: #90949c;
+    }
+    
+    .error-message {
+      color: #e53935;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .register-button {
+      background-color: #4a148c;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+    }
+    
+    .register-button:hover {
+      background-color: #6a1b9a;
+    }
+    
+    .divider {
+      border-bottom: 1px solid #dadde1;
+      margin: 20px 0;
+    }
+    
+    .login-redirect {
+      text-align: center;
+      margin-top: 15px;
+    }
+    
+    .login-redirect p {
+      color: #606770;
+      font-size: 14px;
+    }
+    
+    .login-redirect a {
+      color: #4a148c;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .login-redirect a:hover {
+      text-decoration: underline;
+    }
+    
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .logo h2 {
+      color: white;
+      font-size: 42px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 10px;
+      }
+      
+      .register-container {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <h2>Rhythm Realm</h2>
+    </div>
+    <div class="register-container">
+      <div class="register-header">
+        <h1>Create Account</h1>
+        <p>Join Rhythm Realm today</p>
+      </div>
+      <form class="register-form" id="registerForm" action="signup.php" method="POST" onsubmit="return validateForm(event)">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Create a username" required>
+          <div class="error-message" id="usernameError">Username must be at least 3 characters</div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Your email address" required>
+          <div class="error-message" id="emailError">Please enter a valid email address</div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Create a password" required>
+          <div class="error-message" id="passwordError">Password must be at least 6 characters</div>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+          <div class="error-message" id="confirmPasswordError">Passwords do not match</div>
+        </div>
+        <button type="submit" class="register-button">Create Account</button>
+      </form>
+      <div class="login-redirect">
+        <p>Already have an account? <a href="index.html">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function validateForm(event) {
+      let isValid = true;
+      
+      // Get form elements
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      // Reset error messages
+      document.getElementById('usernameError').style.display = 'none';
+      document.getElementById('emailError').style.display = 'none';
+      document.getElementById('passwordError').style.display = 'none';
+      document.getElementById('confirmPasswordError').style.display = 'none';
+      
+      // Validate username
+      if (username.length < 3) {
+        document.getElementById('usernameError').style.display = 'block';
+        isValid = false;
+      }
+      
+      // Validate email
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        document.getElementById('emailError').style.display = 'block';
+        isValid = false;
+      }
+      
+      // Validate password
+      if (password.length < 6) {
+        document.getElementById('passwordError').style.display = 'block';
+        isValid = false;
+      }
+      
+      // Validate password confirmation
+      if (password !== confirmPassword) {
+        document.getElementById('confirmPasswordError').style.display = 'block';
+        isValid = false;
+      }
+      
+      return isValid;
+    }
+  </script>
+</body>
+</html>
