@@ -1,0 +1,680 @@
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+
+type Page = 'home' | 'about' | 'services' | 'contact' | 'piano' | 'drums' | 'guitar' | 'login' | 'register';
+
+type NavItem = {
+  label: string;
+  path: string;
+  page: Page;
+};
+
+const navItems: NavItem[] = [
+  { label: 'Home', path: '/', page: 'home' },
+  { label: 'About', path: '/about', page: 'about' },
+  { label: 'Services', path: '/services', page: 'services' },
+  { label: 'Contact', path: '/contact', page: 'contact' },
+];
+
+const routeMap: Record<string, Page> = {
+  '/': 'home',
+  '/index.html': 'home',
+  '/ict-proj-instruments': 'home',
+  '/ict%20proj%20instruments.html': 'home',
+  '/about': 'about',
+  '/about.html': 'about',
+  '/services': 'services',
+  '/services.html': 'services',
+  '/contact': 'contact',
+  '/contact.html': 'contact',
+  '/piano': 'piano',
+  '/piano.html': 'piano',
+  '/drums': 'drums',
+  '/drums.html': 'drums',
+  '/guitar': 'guitar',
+  '/guitar.html': 'guitar',
+  '/login': 'login',
+  '/login.html': 'login',
+  '/register': 'register',
+  '/register.html': 'register',
+};
+
+const instrumentCards = [
+  { title: 'Piano', image: '/img/Piano.png', page: 'piano' as Page, className: 'image-container' },
+  { title: 'Drums', image: '/img/Drums.png', page: 'drums' as Page, className: 'Drums-container' },
+  { title: 'Guitar', image: '/img/Guitar.png', page: 'guitar' as Page, className: 'Guitar-container' },
+];
+
+const pianoKeys = [
+  { note: 'a', type: 'white' },
+  { note: 'w', type: 'black' },
+  { note: 's', type: 'white' },
+  { note: 'e', type: 'black' },
+  { note: 'd', type: 'white' },
+  { note: 'f', type: 'white' },
+  { note: 't', type: 'black' },
+  { note: 'g', type: 'white' },
+  { note: 'y', type: 'black' },
+  { note: 'h', type: 'white' },
+  { note: 'u', type: 'black' },
+  { note: 'j', type: 'white' },
+  { note: 'k', type: 'white' },
+  { note: 'o', type: 'black' },
+  { note: 'l', type: 'white' },
+  { note: 'p', type: 'black' },
+  { note: ';', type: 'white' },
+];
+
+const drumPads = [
+  { id: 'crash1', label: 'Crash', className: 'drum cymbal crash-left', src: '/Drums-aud/crash1.wav', key: 'j' },
+  { id: 'tom1', label: 'Tom 1', className: 'drum tom tom1', src: '/Drums-aud/tom1.wav', key: 'f' },
+  { id: 'tom2', label: 'Tom 2', className: 'drum tom tom2', src: '/Drums-aud/tom2.wav', key: 'g' },
+  { id: 'tom3', label: 'Tom 3', className: 'drum tom tom3', src: '/Drums-aud/tom3.wav', key: 'h' },
+  { id: 'crash2', label: 'Crash', className: 'drum cymbal crash-right', src: '/Drums-aud/crash2.wav', key: 'k' },
+  { id: 'hihat', label: 'Hi-Hat', className: 'drum hihat', src: '/Drums-aud/hihat.wav', key: 'd' },
+  { id: 'snare', label: 'Snare', className: 'drum snare', src: '/Drums-aud/snare.wav', key: 's' },
+  { id: 'kick', label: 'Kick', className: 'drum kick kick-left', src: '/Drums-aud/kick.wav', key: 'a' },
+  { id: 'kick2', label: 'Kick', className: 'drum kick kick-right', src: '/Drums-aud/kick.wav', key: 'l' },
+];
+
+const guitarStrings = [
+  { id: 'string1', src: '/Sounds/String1.wav', key: 'a' },
+  { id: 'string2', src: '/Sounds/String2.wav', key: 's' },
+  { id: 'string3', src: '/Sounds/String3.wav', key: 'd' },
+  { id: 'string4', src: '/Sounds/String4.wav', key: 'f' },
+  { id: 'string5', src: '/Sounds/String5.wav', key: 'g' },
+];
+
+function pageFromPath(pathname: string): Page {
+  return routeMap[pathname.toLowerCase()] ?? 'home';
+}
+
+function navigate(path: string) {
+  window.history.pushState({}, '', path);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+}
+
+function App() {
+  const [page, setPage] = useState<Page>(() => pageFromPath(window.location.pathname));
+
+  useEffect(() => {
+    const handleRouteChange = () => setPage(pageFromPath(window.location.pathname));
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, []);
+
+  useEffect(() => {
+    document.title = page === 'home' ? 'Rhythm Realm' : `${page[0].toUpperCase()}${page.slice(1)} - Rhythm Realm`;
+  }, [page]);
+
+  return (
+    <>
+      <Nav />
+      {page === 'home' && <Home />}
+      {page === 'about' && <About />}
+      {page === 'services' && <Services />}
+      {page === 'contact' && <Contact />}
+      {page === 'piano' && <Piano />}
+      {page === 'drums' && <Drums />}
+      {page === 'guitar' && <Guitar />}
+      {page === 'login' && <Login />}
+      {page === 'register' && <Register />}
+      {page !== 'login' && page !== 'register' && (
+        <Footer text={page === 'drums' || page === 'guitar' ? 'My Website' : 'Rhythm Realm'} />
+      )}
+    </>
+  );
+}
+
+function Nav() {
+  return (
+    <nav className="navbar">
+      <ul className="nav-list">
+        {navItems.map((item) => (
+          <li key={item.path}>
+            <a
+              href={item.path}
+              onClick={(event) => {
+                event.preventDefault();
+                navigate(item.path);
+              }}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function Home() {
+  return (
+    <main className="page page-home">
+      <header className="header">
+        <h1>Rhythm Realm</h1>
+        <p>Online Instruments</p>
+      </header>
+
+      <section className="home-content">
+        {instrumentCards.map((instrument) => (
+          <button
+            className={instrument.className}
+            key={instrument.title}
+            onClick={() => navigate(`/${instrument.page}`)}
+            type="button"
+            aria-label={`Open ${instrument.title}`}
+          >
+            <img src={instrument.image} alt={instrument.title} />
+          </button>
+        ))}
+      </section>
+    </main>
+  );
+}
+
+function About() {
+  return (
+    <main className="page page-content">
+      <header className="header">
+        <h1>About Rhythm Realm</h1>
+        <p>Discover Our Musical Journey</p>
+      </header>
+
+      <section className="stacked-content">
+        <article className="about-section">
+          <h2>Our Story</h2>
+          <p>
+            Rhythm Realm was born out of a passion for music and a desire to make playing instruments
+            accessible to everyone. Founded in 2024, we've been on a mission to bring the joy of music to
+            people's homes through our innovative online instrument platform.
+          </p>
+        </article>
+
+        <article className="about-section">
+          <h2>Our Mission</h2>
+          <p>
+            At Rhythm Realm, we believe that music has the power to inspire, heal, and connect people. Our
+            mission is to provide a user-friendly platform where anyone, regardless of their musical background,
+            can explore and play various instruments online.
+          </p>
+        </article>
+
+        <article className="about-section">
+          <h2>What We Offer</h2>
+          <ul>
+            <li>Interactive online instruments (Piano, Drums, Guitar)</li>
+            <li>User-friendly interface for beginners and experienced musicians</li>
+            <li>High-quality sound samples for an authentic playing experience</li>
+            <li>Accessible from any device with an internet connection</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  );
+}
+
+function Services() {
+  return (
+    <main className="page page-content">
+      <header className="header">
+        <h1>Our Services</h1>
+        <p>Explore the World of Online Instruments</p>
+      </header>
+
+      <section className="services-content">
+        {[
+          {
+            title: 'Online Piano',
+            image: '/img/Piano.png',
+            text: 'Experience the joy of playing piano anytime, anywhere. Our online piano features realistic sound and responsive keys, perfect for beginners and experienced pianists alike.',
+            link: 'Try Piano',
+            page: 'piano' as Page,
+          },
+          {
+            title: 'Virtual Drums',
+            image: '/img/Drums.png',
+            text: "Beat out rhythms and create dynamic percussion with our virtual drum kit. Featuring multiple drum pads and cymbals, it's a great way to practice or lay down beats.",
+            link: 'Try Drums',
+            page: 'drums' as Page,
+          },
+          {
+            title: 'Digital Guitar',
+            image: '/img/Guitar.png',
+            text: 'Strum, pick, and shred on our digital guitar. With various sound options and effects, you can explore different styles and techniques from classical to rock.',
+            link: 'Try Guitar',
+            page: 'guitar' as Page,
+          },
+        ].map((service) => (
+          <article className="service-section" key={service.title}>
+            <h2>{service.title}</h2>
+            <img src={service.image} alt={`${service.title} Interface`} className="service-image" />
+            <p>{service.text}</p>
+            <button className="service-link" type="button" onClick={() => navigate(`/${service.page}`)}>
+              {service.link}
+            </button>
+          </article>
+        ))}
+      </section>
+    </main>
+  );
+}
+
+function Contact() {
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitted(true);
+    event.currentTarget.reset();
+  }
+
+  return (
+    <main className="page page-content">
+      <header className="header">
+        <h1>Contact Us</h1>
+        <p>Get in Touch with Rhythm Realm</p>
+      </header>
+
+      <section className="contact-content">
+        <article className="contact-section">
+          <h2>Send Us a Message</h2>
+          <form className="contact-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="name">Name:</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email:</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div className="form-group">
+              <label htmlFor="message">Message:</label>
+              <textarea id="message" name="message" required />
+            </div>
+            <button type="submit" className="submit-btn">
+              Send Message
+            </button>
+            {submitted && <p className="form-status">Message received.</p>}
+          </form>
+        </article>
+
+        <article className="contact-info">
+          <h2>Contact Information</h2>
+          <p>
+            <strong>Email:</strong> info@rhythmrealm.com
+          </p>
+          <p>
+            <strong>Phone:</strong> +92 (345) 678-9876
+          </p>
+          <p>
+            <strong>Address:</strong> 123 Music Street, Harmony City, MU 12345
+          </p>
+        </article>
+      </section>
+    </main>
+  );
+}
+
+function Login() {
+  const [errors, setErrors] = useState({ email: false, password: false });
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const email = String(form.get('email') ?? '');
+    const password = String(form.get('password') ?? '');
+    const nextErrors = {
+      email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+      password: password.length < 6,
+    };
+    setErrors(nextErrors);
+    if (!nextErrors.email && !nextErrors.password) {
+      navigate('/');
+    }
+  }
+
+  return (
+    <main className="auth-page">
+      <div className="auth-container">
+        <div className="logo">
+          <h2>Rhythm Realm</h2>
+        </div>
+        <section className="auth-card">
+          <div className="auth-header">
+            <h1>Welcome</h1>
+            <p>Sign in to continue to Rhythm Realm</p>
+          </div>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input type="email" name="email" placeholder="Email address" required />
+              {errors.email && <div className="error-message">Please enter a valid email address</div>}
+            </div>
+            <div className="form-group">
+              <input type="password" name="password" placeholder="Password" required />
+              {errors.password && <div className="error-message">Password must be at least 6 characters</div>}
+            </div>
+            <button type="submit" className="login-button">
+              Sign In
+            </button>
+            <div className="forgot-password">
+              <a href="/login" onClick={(event) => event.preventDefault()}>
+                Forgot Password?
+              </a>
+            </div>
+            <div className="divider" />
+            <div className="create-account">
+              <button type="button" className="create-account-button" onClick={() => navigate('/register')}>
+                Create New Account
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function Register() {
+  const [errors, setErrors] = useState({
+    username: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const username = String(form.get('username') ?? '');
+    const email = String(form.get('email') ?? '');
+    const password = String(form.get('password') ?? '');
+    const confirmPassword = String(form.get('confirmPassword') ?? '');
+    const nextErrors = {
+      username: username.length < 3,
+      email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+      password: password.length < 6,
+      confirmPassword: password !== confirmPassword,
+    };
+    setErrors(nextErrors);
+    if (!Object.values(nextErrors).some(Boolean)) {
+      navigate('/login');
+    }
+  }
+
+  return (
+    <main className="auth-page">
+      <div className="auth-container">
+        <div className="logo">
+          <h2>Rhythm Realm</h2>
+        </div>
+        <section className="auth-card register-card">
+          <div className="auth-header">
+            <h1>Create Account</h1>
+            <p>Join Rhythm Realm today</p>
+          </div>
+          <form className="register-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <input type="text" id="username" name="username" placeholder="Create a username" required />
+              {errors.username && <div className="error-message">Username must be at least 3 characters</div>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="register-email">Email</label>
+              <input type="email" id="register-email" name="email" placeholder="Your email address" required />
+              {errors.email && <div className="error-message">Please enter a valid email address</div>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="register-password">Password</label>
+              <input
+                type="password"
+                id="register-password"
+                name="password"
+                placeholder="Create a password"
+                required
+              />
+              {errors.password && <div className="error-message">Password must be at least 6 characters</div>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                required
+              />
+              {errors.confirmPassword && <div className="error-message">Passwords do not match</div>}
+            </div>
+            <button type="submit" className="register-button">
+              Create Account
+            </button>
+          </form>
+          <div className="login-redirect">
+            <p>
+              Already have an account?{' '}
+              <a
+                href="/login"
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate('/login');
+                }}
+              >
+                Sign In
+              </a>
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
+
+function Piano() {
+  const [volume, setVolume] = useState(0.5);
+  const [showKeys, setShowKeys] = useState(true);
+  const [activeKey, setActiveKey] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const validKeys = useMemo(() => pianoKeys.map((key) => key.note), []);
+
+  function playTune(note: string) {
+    const audio = audioRef.current ?? new Audio(`/Tunes/${note}.wav`);
+    audioRef.current = audio;
+    audio.src = `/Tunes/${note}.wav`;
+    audio.volume = volume;
+    void audio.play();
+    setActiveKey(note);
+    window.setTimeout(() => setActiveKey((current) => (current === note ? null : current)), 150);
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (validKeys.includes(event.key)) {
+        playTune(event.key);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [validKeys, volume]);
+
+  return (
+    <main className="instrument-page piano-page">
+      <section className="wrapper">
+        <header>
+          <h2>Piano</h2>
+          <div className="column volume-slider">
+            <span>Volume</span>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              value={volume}
+              step="any"
+              onChange={(event) => setVolume(Number(event.target.value))}
+            />
+          </div>
+          <div className="column keys-checkbox">
+            <span>Show keys</span>
+            <input type="checkbox" checked={showKeys} onChange={() => setShowKeys((value) => !value)} />
+          </div>
+        </header>
+        <ul className="piano-keys">
+          {pianoKeys.map((key) => (
+            <li
+              className={`key ${key.type} ${showKeys ? '' : 'hide'} ${activeKey === key.note ? 'active' : ''}`}
+              data-key={key.note}
+              key={key.note}
+              onClick={() => playTune(key.note)}
+            >
+              <span>{key.note}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
+  );
+}
+
+function Drums() {
+  const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
+  const keyMap = useMemo(() => Object.fromEntries(drumPads.map((pad) => [pad.key, pad.id])), []);
+
+  function playSound(soundId: string) {
+    const audio = audioRefs.current[soundId];
+    if (audio) {
+      audio.currentTime = 0;
+      void audio.play();
+    }
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const soundId = keyMap[event.key.toLowerCase()];
+      if (soundId) {
+        playSound(soundId);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [keyMap]);
+
+  return (
+    <main className="instrument-page drums-page">
+      <div className="Instructions">
+        <ul>
+          <li>A : Kick</li>
+          <li>S : Snare</li>
+          <li>D : Hihat</li>
+          <li>F : Tom1</li>
+          <li>G : Tom2</li>
+          <li>H : Tom3</li>
+          <li>J : Crash1</li>
+          <li>K : Crash2</li>
+          <li>L : Kick2</li>
+        </ul>
+      </div>
+      <section className="drumkit" aria-label="Virtual drum kit">
+        {drumPads.map((pad) => (
+          <button className={pad.className} key={pad.id} onClick={() => playSound(pad.id)} type="button">
+            {pad.label}
+          </button>
+        ))}
+      </section>
+      {drumPads.map((pad) => (
+        <audio
+          hidden
+          id={pad.id}
+          key={pad.id}
+          preload="auto"
+          ref={(element) => {
+            audioRefs.current[pad.id] = element;
+          }}
+          src={pad.src}
+        />
+      ))}
+    </main>
+  );
+}
+
+function Guitar() {
+  const [activeString, setActiveString] = useState<string | null>(null);
+  const keyMap = useMemo(() => Object.fromEntries(guitarStrings.map((string) => [string.key, string.id])), []);
+
+  function playSound(id: string) {
+    const string = guitarStrings.find((item) => item.id === id);
+    if (string) {
+      void new Audio(string.src).play();
+      setActiveString(id);
+      window.setTimeout(() => setActiveString((current) => (current === id ? null : current)), 180);
+    }
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const stringId = keyMap[event.key.toLowerCase()];
+      if (stringId) {
+        playSound(stringId);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [keyMap]);
+
+  return (
+    <main className="instrument-page guitar-page">
+      <div className="Instructions">
+        <ul>
+          <li>A : string1</li>
+          <li>S : string2</li>
+          <li>D : string3</li>
+          <li>F : string4</li>
+          <li>G : string5</li>
+        </ul>
+      </div>
+      <section className="guitar" aria-label="Digital guitar">
+        <div className="headstock">
+          <span className="tuner tuner-left tuner-top" />
+          <span className="tuner tuner-left tuner-bottom" />
+          <span className="tuner tuner-right tuner-top" />
+          <span className="tuner tuner-right tuner-bottom" />
+        </div>
+        <div className="neck">
+          {Array.from({ length: 9 }, (_, index) => (
+            <span className="fret" key={index} />
+          ))}
+          <span className="fret-dot fret-dot-one" />
+          <span className="fret-dot fret-dot-two" />
+        </div>
+        <div className="guitar-body">
+          <div className="body-shoulder body-shoulder-left" />
+          <div className="body-shoulder body-shoulder-right" />
+          <div className="soundhole" />
+          <div className="rosette" />
+          <div className="bridge" />
+        </div>
+        <div className="strings">
+          {guitarStrings.map((string, index) => (
+            <button
+              aria-label={string.id}
+              className={`string string-${index + 1} ${activeString === string.id ? 'is-plucked' : ''}`}
+              key={string.id}
+              onClick={() => playSound(string.id)}
+              type="button"
+            >
+              <span>{string.key.toUpperCase()}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function Footer({ text }: { text: string }) {
+  return (
+    <footer className="footer">
+      <p>&copy; 2024 {text} | All rights reserved.</p>
+    </footer>
+  );
+}
+
+export { App };
