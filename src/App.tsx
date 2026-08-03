@@ -1291,37 +1291,55 @@ function Harmonica() {
           </div>
         </div>
 
-        <div className="harmonica-body">
-          <div className="harmonica-mouthpiece">
-            {harmonicaHoles.map(h => (
-              <div key={`hole-${h.hole}`} className="harmonica-hole">
-                <button
-                  type="button"
-                  className={`reed-btn blow ${activeNotes[`blow-${h.hole}`] ? 'active-blow' : ''}`}
-                  onMouseDown={() => playNote(h.blowFreq, `blow-${h.hole}`)}
-                  onMouseUp={() => stopNote(`blow-${h.hole}`)}
-                  onMouseLeave={() => stopNote(`blow-${h.hole}`)}
-                  onTouchStart={(e) => { e.preventDefault(); playNote(h.blowFreq, `blow-${h.hole}`); }}
-                  onTouchEnd={() => stopNote(`blow-${h.hole}`)}
-                >
-                  <span className="action">Blow</span>
-                  <span className="note">{h.blowNote}</span>
-                </button>
-                <div className="hole-label">{h.hole}</div>
-                <button
-                  type="button"
-                  className={`reed-btn draw ${activeNotes[`draw-${h.hole}`] ? 'active-draw' : ''}`}
-                  onMouseDown={() => playNote(h.drawFreq, `draw-${h.hole}`)}
-                  onMouseUp={() => stopNote(`draw-${h.hole}`)}
-                  onMouseLeave={() => stopNote(`draw-${h.hole}`)}
-                  onTouchStart={(e) => { e.preventDefault(); playNote(h.drawFreq, `draw-${h.hole}`); }}
-                  onTouchEnd={() => stopNote(`draw-${h.hole}`)}
-                >
-                  <span className="action">Draw</span>
-                  <span className="note">{h.drawNote}</span>
-                </button>
+        <div className="harmonica-body-wrapper">
+          <div className="harmonica-bracket left">
+            <div className="screw"></div>
+          </div>
+
+          <div className="harmonica-metal-casing">
+            <div className="cover-plate top">
+              <div className="engraving">Rhythm Realm</div>
+            </div>
+
+            <div className="harmonica-comb">
+              <div className="harmonica-mouthpiece">
+                {harmonicaHoles.map(h => (
+                  <div key={`hole-${h.hole}`} className="harmonica-hole">
+                    <button
+                      type="button"
+                      className={`reed-btn blow ${activeNotes[`blow-${h.hole}`] ? 'active-blow' : ''}`}
+                      onMouseDown={() => playNote(h.blowFreq, `blow-${h.hole}`)}
+                      onMouseUp={() => stopNote(`blow-${h.hole}`)}
+                      onMouseLeave={() => stopNote(`blow-${h.hole}`)}
+                      onTouchStart={(e) => { e.preventDefault(); playNote(h.blowFreq, `blow-${h.hole}`); }}
+                      onTouchEnd={() => stopNote(`blow-${h.hole}`)}
+                    >
+                      <span className="action">Blow</span>
+                      <span className="note">{h.blowNote}</span>
+                    </button>
+                    <div className="hole-label">{h.hole}</div>
+                    <button
+                      type="button"
+                      className={`reed-btn draw ${activeNotes[`draw-${h.hole}`] ? 'active-draw' : ''}`}
+                      onMouseDown={() => playNote(h.drawFreq, `draw-${h.hole}`)}
+                      onMouseUp={() => stopNote(`draw-${h.hole}`)}
+                      onMouseLeave={() => stopNote(`draw-${h.hole}`)}
+                      onTouchStart={(e) => { e.preventDefault(); playNote(h.drawFreq, `draw-${h.hole}`); }}
+                      onTouchEnd={() => stopNote(`draw-${h.hole}`)}
+                    >
+                      <span className="action">Draw</span>
+                      <span className="note">{h.drawNote}</span>
+                    </button>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            <div className="cover-plate bottom"></div>
+          </div>
+
+          <div className="harmonica-bracket right">
+            <div className="screw"></div>
           </div>
         </div>
       </section>
