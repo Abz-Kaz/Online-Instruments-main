@@ -84,6 +84,210 @@ const guitarStrings = [
   { id: 'string5', src: '/Sounds/String5.wav', key: 'g' },
 ];
 
+type DrumMode = 'acoustic' | 'electronic' | 'arena';
+type GuitarMode = 'acoustic' | 'clean' | 'overdrive';
+
+const drumModes: Array<{ id: DrumMode; label: string; description: string }> = [
+  { id: 'acoustic', label: 'Acoustic Kit', description: 'Warm, roomy, and natural' },
+  { id: 'electronic', label: 'Electronic Kit', description: 'Tight, punchy, and polished' },
+  { id: 'arena', label: 'Arena Kit', description: 'Big, open, and cinematic' },
+];
+
+const guitarModes: Array<{ id: GuitarMode; label: string; description: string }> = [
+  { id: 'acoustic', label: 'Acoustic', description: 'Airy and organic' },
+  { id: 'clean', label: 'Electric', description: 'Bright with subtle space' },
+  { id: 'overdrive', label: 'Overdrive', description: 'Gritty and expressive' },
+];
+
+const drumRecipes: Record<
+  DrumMode,
+  {
+    gain: number;
+    reverb: number;
+    reverbTime: number;
+    reverbDecay: number;
+    distortion: number;
+    threshold: number;
+    ratio: number;
+    attack: number;
+    release: number;
+  }
+> = {
+  acoustic: {
+    gain: 1,
+    reverb: 0.18,
+    reverbTime: 1.4,
+    reverbDecay: 2.4,
+    distortion: 0.02,
+    threshold: -22,
+    ratio: 4,
+    attack: 0.004,
+    release: 0.18,
+  },
+  electronic: {
+    gain: 1.05,
+    reverb: 0.08,
+    reverbTime: 0.8,
+    reverbDecay: 1.4,
+    distortion: 0.12,
+    threshold: -16,
+    ratio: 8,
+    attack: 0.001,
+    release: 0.08,
+  },
+  arena: {
+    gain: 1.08,
+    reverb: 0.28,
+    reverbTime: 1.9,
+    reverbDecay: 3.4,
+    distortion: 0.04,
+    threshold: -20,
+    ratio: 5,
+    attack: 0.006,
+    release: 0.22,
+  },
+};
+
+const guitarRecipes: Record<
+  GuitarMode,
+  {
+    gain: number;
+    reverb: number;
+    reverbTime: number;
+    reverbDecay: number;
+    delayMix: number;
+    delayTime: number;
+    delayFeedback: number;
+    distortion: number;
+    lowPass: number;
+  }
+> = {
+  acoustic: {
+    gain: 0.96,
+    reverb: 0.22,
+    reverbTime: 1.2,
+    reverbDecay: 2.2,
+    delayMix: 0,
+    delayTime: 0,
+    delayFeedback: 0,
+    distortion: 0,
+    lowPass: 12500,
+  },
+  clean: {
+    gain: 0.94,
+    reverb: 0.14,
+    reverbTime: 1,
+    reverbDecay: 1.8,
+    delayMix: 0.12,
+    delayTime: 0.09,
+    delayFeedback: 0.16,
+    distortion: 0.01,
+    lowPass: 15000,
+  },
+  overdrive: {
+    gain: 1,
+    reverb: 0.1,
+    reverbTime: 0.9,
+    reverbDecay: 1.4,
+    delayMix: 0.06,
+    delayTime: 0.11,
+    delayFeedback: 0.2,
+    distortion: 0.26,
+    lowPass: 9800,
+  },
+};
+
+function getAudioContext() {
+  const contextClass = window.AudioContext ?? (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  if (!contextClass) {
+    return null;
+  }
+  return new contextClass();
+}
+
+function createImpulseResponse(context: AudioContext, durationSeconds: number, decay: number) {
+  const length = Math.max(1, Math.floor(context.sampleRate * durationSeconds));
+  const buffer = context.createBuffer(2, length, context.sampleRate);
+
+  for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+    const data = buffer.getChannelData(channel);
+    for (let index = 0; index < length; index += 1) {
+      data[index] = (Math.random() * 2 - 1) * Math.pow(1 - index / length, decay);
+    }
+  }
+
+  return buffer;
+}
+
+function createDistortionCurve(amount: number) {
+  const curve = new Float32Array(44100);
+  const drive = Math.max(0.001, amount);
+  const k = drive * 100;
+
+  for (let index = 0; index < curve.length; index += 1) {
+    const x = (index * 2) / curve.length - 1;
+    curve[index] = ((3 + k) * x * 20 * (Math.PI / 180)) / (Math.PI + k * Math.abs(x));
+  }
+
+  return curve;
+}
+
+function getFilterForDrum(padId: string, mode: DrumMode) {
+  const filters: Record<string, BiquadFilterType> = {
+    kick: 'lowpass',
+    kick2: 'lowpass',
+    snare: 'bandpass',
+    hihat: 'highpass',
+    tom1: 'bandpass',
+    tom2: 'bandpass',
+    tom3: 'bandpass',
+    crash1: 'highpass',
+    crash2: 'highpass',
+  };
+
+  const frequencies: Record<string, number> = {
+    kick: mode === 'electronic' ? 260 : 180,
+    kick2: mode === 'electronic' ? 280 : 190,
+    snare: mode === 'arena' ? 3400 : 2500,
+    hihat: 6500,
+    tom1: 2400,
+    tom2: 2200,
+    tom3: 2000,
+    crash1: 5200,
+    crash2: 5400,
+  };
+
+  return {
+    type: filters[padId] ?? 'lowpass',
+    frequency: frequencies[padId] ?? 4000,
+    q: padId === 'snare' ? 1.4 : 0.9,
+    detune: (Math.random() - 0.5) * (mode === 'arena' ? 10 : 6),
+    playbackRate:
+      padId === 'kick' || padId === 'kick2'
+        ? mode === 'electronic'
+          ? 0.96
+          : 1
+        : padId === 'hihat' || padId === 'crash1' || padId === 'crash2'
+          ? 1.01
+          : 1 + (Math.random() - 0.5) * 0.03,
+  };
+}
+
+function getFilterForGuitar(mode: GuitarMode, stringIndex: number) {
+  return {
+    type: 'lowpass' as BiquadFilterType,
+    frequency: guitarRecipes[mode].lowPass,
+    q: 0.7,
+    detune: (Math.random() - 0.5) * (mode === 'overdrive' ? 8 : 5),
+    playbackRate:
+      mode === 'overdrive'
+        ? 1 + stringIndex * 0.006
+        : mode === 'clean'
+          ? 1 + stringIndex * 0.004
+          : 1 + stringIndex * 0.002,
+  };
+}
+
 function pageFromPath(pathname: string): Page {
   return routeMap[pathname.toLowerCase()] ?? 'home';
 }
@@ -535,22 +739,116 @@ function Piano() {
 }
 
 function Drums() {
-  const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
+  const [mode, setMode] = useState<DrumMode>('acoustic');
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const bufferCacheRef = useRef<Record<string, AudioBuffer | undefined>>({});
+  const impulseCacheRef = useRef<Record<string, AudioBuffer | undefined>>({});
   const keyMap = useMemo(() => Object.fromEntries(drumPads.map((pad) => [pad.key, pad.id])), []);
 
-  function playSound(soundId: string) {
-    const audio = audioRefs.current[soundId];
-    if (audio) {
-      audio.currentTime = 0;
-      void audio.play();
+  async function ensureContext() {
+    if (!audioContextRef.current) {
+      audioContextRef.current = getAudioContext();
     }
+    const context = audioContextRef.current;
+    if (context && context.state === 'suspended') {
+      await context.resume();
+    }
+    return context;
+  }
+
+  async function loadBuffer(context: AudioContext, src: string) {
+    const cached = bufferCacheRef.current[src];
+    if (cached) {
+      return cached;
+    }
+    const response = await fetch(src);
+    const data = await response.arrayBuffer();
+    const buffer = await context.decodeAudioData(data);
+    bufferCacheRef.current[src] = buffer;
+    return buffer;
+  }
+
+  async function getImpulse(context: AudioContext, key: string, durationSeconds: number, decay: number) {
+    const cacheKey = `${key}-${durationSeconds}-${decay}`;
+    const cached = impulseCacheRef.current[cacheKey];
+    if (cached) {
+      return cached;
+    }
+    const buffer = createImpulseResponse(context, durationSeconds, decay);
+    impulseCacheRef.current[cacheKey] = buffer;
+    return buffer;
+  }
+
+  async function playSound(soundId: string) {
+    const context = await ensureContext();
+    const pad = drumPads.find((item) => item.id === soundId);
+    if (!context || !pad) {
+      return;
+    }
+
+    const buffer = await loadBuffer(context, pad.src);
+    const recipe = drumRecipes[mode];
+    const filterRecipe = getFilterForDrum(soundId, mode);
+    const source = context.createBufferSource();
+    const filter = context.createBiquadFilter();
+    const compressor = context.createDynamicsCompressor();
+    const dryGain = context.createGain();
+    const wetGain = context.createGain();
+    const master = context.createGain();
+    const convolver = context.createConvolver();
+    const shaper = context.createWaveShaper();
+
+    source.buffer = buffer;
+    source.playbackRate.value = filterRecipe.playbackRate;
+    source.detune.value = filterRecipe.detune;
+
+    filter.type = filterRecipe.type;
+    filter.frequency.value = filterRecipe.frequency;
+    filter.Q.value = filterRecipe.q;
+
+    compressor.threshold.value = recipe.threshold;
+    compressor.knee.value = 22;
+    compressor.ratio.value = recipe.ratio;
+    compressor.attack.value = recipe.attack;
+    compressor.release.value = recipe.release;
+
+    shaper.curve = recipe.distortion > 0 ? createDistortionCurve(recipe.distortion) : null;
+    shaper.oversample = '4x';
+
+    dryGain.gain.value = 1 - recipe.reverb * 0.7;
+    wetGain.gain.value = recipe.reverb;
+    master.gain.value = recipe.gain;
+    convolver.buffer = await getImpulse(context, `${mode}-drum`, recipe.reverbTime, recipe.reverbDecay);
+
+    source.connect(filter);
+    filter.connect(shaper);
+    shaper.connect(compressor);
+    compressor.connect(dryGain);
+    compressor.connect(convolver);
+    convolver.connect(wetGain);
+    dryGain.connect(master);
+    wetGain.connect(master);
+    master.connect(context.destination);
+    const cleanup = () => {
+      [source, filter, shaper, compressor, dryGain, wetGain, master, convolver].forEach((node) => {
+        try {
+          node.disconnect();
+        } catch {
+          // Ignore nodes that already disconnected.
+        }
+      });
+    };
+
+    source.onended = cleanup;
+    window.setTimeout(cleanup, 5000);
+    source.start();
   }
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const soundId = keyMap[event.key.toLowerCase()];
       if (soundId) {
-        playSound(soundId);
+        void playSound(soundId);
       }
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -559,60 +857,194 @@ function Drums() {
 
   return (
     <main className="instrument-page drums-page">
-      <div className="Instructions">
-        <ul>
-          <li>A : Kick</li>
-          <li>S : Snare</li>
-          <li>D : Hihat</li>
-          <li>F : Tom1</li>
-          <li>G : Tom2</li>
-          <li>H : Tom3</li>
-          <li>J : Crash1</li>
-          <li>K : Crash2</li>
-          <li>L : Kick2</li>
-        </ul>
-      </div>
-      <section className="drumkit" aria-label="Virtual drum kit">
-        {drumPads.map((pad) => (
-          <button className={pad.className} key={pad.id} onClick={() => playSound(pad.id)} type="button">
-            {pad.label}
-          </button>
-        ))}
+      <section className="instrument-shell">
+        <header className="instrument-header">
+          <div>
+            <p className="eyebrow">Percussion Studio</p>
+            <h1>Drums</h1>
+            <p className="instrument-copy">
+              Switch between acoustic, electronic, and arena-style kits while keeping the pads responsive and
+              musical.
+            </p>
+          </div>
+          <div className="mode-switcher" role="tablist" aria-label="Drum kit styles">
+            {drumModes.map((item) => (
+              <button
+                className={`mode-chip ${mode === item.id ? 'is-active' : ''}`}
+                key={item.id}
+                onClick={() => setMode(item.id)}
+                type="button"
+              >
+                <strong>{item.label}</strong>
+                <span>{item.description}</span>
+              </button>
+            ))}
+          </div>
+        </header>
+
+        <div className="instrument-grid">
+          <aside className="instrument-notes">
+            <h2>Keyboard map</h2>
+            <ul>
+              <li>A : Kick</li>
+              <li>S : Snare</li>
+              <li>D : Hi-Hat</li>
+              <li>F : Tom 1</li>
+              <li>G : Tom 2</li>
+              <li>H : Tom 3</li>
+              <li>J : Crash 1</li>
+              <li>K : Crash 2</li>
+              <li>L : Kick 2</li>
+            </ul>
+          </aside>
+
+          <section className="drumkit-shell">
+            <div className="drumkit-stage">
+              <div className="stage-glow stage-glow-one" />
+              <div className="stage-glow stage-glow-two" />
+              <div className="drumkit" aria-label="Virtual drum kit">
+                {drumPads.map((pad) => (
+                  <button className={pad.className} key={pad.id} onClick={() => void playSound(pad.id)} type="button">
+                    {pad.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
       </section>
-      {drumPads.map((pad) => (
-        <audio
-          hidden
-          id={pad.id}
-          key={pad.id}
-          preload="auto"
-          ref={(element) => {
-            audioRefs.current[pad.id] = element;
-          }}
-          src={pad.src}
-        />
-      ))}
     </main>
   );
 }
 
 function Guitar() {
+  const [mode, setMode] = useState<GuitarMode>('acoustic');
   const [activeString, setActiveString] = useState<string | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const bufferCacheRef = useRef<Record<string, AudioBuffer | undefined>>({});
+  const impulseCacheRef = useRef<Record<string, AudioBuffer | undefined>>({});
   const keyMap = useMemo(() => Object.fromEntries(guitarStrings.map((string) => [string.key, string.id])), []);
 
-  function playSound(id: string) {
-    const string = guitarStrings.find((item) => item.id === id);
-    if (string) {
-      void new Audio(string.src).play();
-      setActiveString(id);
-      window.setTimeout(() => setActiveString((current) => (current === id ? null : current)), 180);
+  async function ensureContext() {
+    if (!audioContextRef.current) {
+      audioContextRef.current = getAudioContext();
     }
+    const context = audioContextRef.current;
+    if (context && context.state === 'suspended') {
+      await context.resume();
+    }
+    return context;
+  }
+
+  async function loadBuffer(context: AudioContext, src: string) {
+    const cached = bufferCacheRef.current[src];
+    if (cached) {
+      return cached;
+    }
+    const response = await fetch(src);
+    const data = await response.arrayBuffer();
+    const buffer = await context.decodeAudioData(data);
+    bufferCacheRef.current[src] = buffer;
+    return buffer;
+  }
+
+  async function getImpulse(context: AudioContext, key: string, durationSeconds: number, decay: number) {
+    const cacheKey = `${key}-${durationSeconds}-${decay}`;
+    const cached = impulseCacheRef.current[cacheKey];
+    if (cached) {
+      return cached;
+    }
+    const buffer = createImpulseResponse(context, durationSeconds, decay);
+    impulseCacheRef.current[cacheKey] = buffer;
+    return buffer;
+  }
+
+  async function playSound(id: string) {
+    const string = guitarStrings.find((item) => item.id === id);
+    const stringIndex = guitarStrings.findIndex((item) => item.id === id);
+    const context = await ensureContext();
+    if (!string || !context) {
+      return;
+    }
+
+    const buffer = await loadBuffer(context, string.src);
+    const recipe = guitarRecipes[mode];
+    const filterRecipe = getFilterForGuitar(mode, stringIndex);
+    const source = context.createBufferSource();
+    const filter = context.createBiquadFilter();
+    const compressor = context.createDynamicsCompressor();
+    const dryGain = context.createGain();
+    const wetGain = context.createGain();
+    const master = context.createGain();
+    const convolver = context.createConvolver();
+    const delay = context.createDelay(0.8);
+    const delayFeedback = context.createGain();
+    const delayMix = context.createGain();
+    const shaper = context.createWaveShaper();
+
+    source.buffer = buffer;
+    source.playbackRate.value = filterRecipe.playbackRate;
+    source.detune.value = filterRecipe.detune;
+
+    filter.type = filterRecipe.type;
+    filter.frequency.value = filterRecipe.frequency;
+    filter.Q.value = filterRecipe.q;
+
+    compressor.threshold.value = mode === 'overdrive' ? -24 : -18;
+    compressor.knee.value = 20;
+    compressor.ratio.value = mode === 'overdrive' ? 8 : 3.5;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.15;
+
+    shaper.curve = recipe.distortion > 0 ? createDistortionCurve(recipe.distortion) : null;
+    shaper.oversample = '4x';
+
+    dryGain.gain.value = 1 - recipe.reverb * 0.6 - recipe.delayMix * 0.6;
+    wetGain.gain.value = recipe.reverb;
+    delayMix.gain.value = recipe.delayMix;
+    delayFeedback.gain.value = recipe.delayFeedback;
+    master.gain.value = recipe.gain;
+
+    convolver.buffer = await getImpulse(context, `${mode}-guitar`, recipe.reverbTime, recipe.reverbDecay);
+    delay.delayTime.value = recipe.delayTime;
+
+    source.connect(filter);
+    filter.connect(shaper);
+    shaper.connect(compressor);
+    compressor.connect(dryGain);
+    compressor.connect(convolver);
+    compressor.connect(delay);
+    convolver.connect(wetGain);
+    delay.connect(delayFeedback);
+    delay.connect(delayMix);
+    delayFeedback.connect(delay);
+    dryGain.connect(master);
+    wetGain.connect(master);
+    delayMix.connect(master);
+    master.connect(context.destination);
+    const cleanup = () => {
+      [source, filter, shaper, compressor, dryGain, wetGain, master, convolver, delay, delayFeedback, delayMix].forEach((node) => {
+        try {
+          node.disconnect();
+        } catch {
+          // Ignore nodes that already disconnected.
+        }
+      });
+    };
+
+    source.onended = cleanup;
+    window.setTimeout(cleanup, 5000);
+    source.start();
+
+    setActiveString(id);
+    window.setTimeout(() => setActiveString((current) => (current === id ? null : current)), 180);
   }
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const stringId = keyMap[event.key.toLowerCase()];
       if (stringId) {
-        playSound(stringId);
+        void playSound(stringId);
       }
     };
     document.addEventListener('keydown', handleKeyDown);
@@ -621,48 +1053,82 @@ function Guitar() {
 
   return (
     <main className="instrument-page guitar-page">
-      <div className="Instructions">
-        <ul>
-          <li>A : string1</li>
-          <li>S : string2</li>
-          <li>D : string3</li>
-          <li>F : string4</li>
-          <li>G : string5</li>
-        </ul>
-      </div>
-      <section className="guitar" aria-label="Digital guitar">
-        <div className="headstock">
-          <span className="tuner tuner-left tuner-top" />
-          <span className="tuner tuner-left tuner-bottom" />
-          <span className="tuner tuner-right tuner-top" />
-          <span className="tuner tuner-right tuner-bottom" />
-        </div>
-        <div className="neck">
-          {Array.from({ length: 9 }, (_, index) => (
-            <span className="fret" key={index} />
-          ))}
-          <span className="fret-dot fret-dot-one" />
-          <span className="fret-dot fret-dot-two" />
-        </div>
-        <div className="guitar-body">
-          <div className="body-shoulder body-shoulder-left" />
-          <div className="body-shoulder body-shoulder-right" />
-          <div className="soundhole" />
-          <div className="rosette" />
-          <div className="bridge" />
-        </div>
-        <div className="strings">
-          {guitarStrings.map((string, index) => (
-            <button
-              aria-label={string.id}
-              className={`string string-${index + 1} ${activeString === string.id ? 'is-plucked' : ''}`}
-              key={string.id}
-              onClick={() => playSound(string.id)}
-              type="button"
-            >
-              <span>{string.key.toUpperCase()}</span>
-            </button>
-          ))}
+      <section className="instrument-shell guitar-shell">
+        <header className="instrument-header">
+          <div>
+            <p className="eyebrow">String Studio</p>
+            <h1>Guitar</h1>
+            <p className="instrument-copy">
+              Move between acoustic warmth, clean electric shimmer, and overdriven grit with the same instrument
+              layout.
+            </p>
+          </div>
+          <div className="mode-switcher" role="tablist" aria-label="Guitar styles">
+            {guitarModes.map((item) => (
+              <button
+                className={`mode-chip ${mode === item.id ? 'is-active' : ''}`}
+                key={item.id}
+                onClick={() => setMode(item.id)}
+                type="button"
+              >
+                <strong>{item.label}</strong>
+                <span>{item.description}</span>
+              </button>
+            ))}
+          </div>
+        </header>
+
+        <div className="instrument-grid guitar-grid">
+          <aside className="instrument-notes guitar-notes">
+            <h2>Keyboard map</h2>
+            <ul>
+              <li>A : String 1</li>
+              <li>S : String 2</li>
+              <li>D : String 3</li>
+              <li>F : String 4</li>
+              <li>G : String 5</li>
+            </ul>
+          </aside>
+
+          <section className="guitar-stage" aria-label="Digital guitar">
+            <div className="stage-glow stage-glow-one" />
+            <div className="stage-glow stage-glow-two" />
+            <div className="guitar">
+              <div className="headstock">
+                <span className="tuner tuner-left tuner-top" />
+                <span className="tuner tuner-left tuner-bottom" />
+                <span className="tuner tuner-right tuner-top" />
+                <span className="tuner tuner-right tuner-bottom" />
+              </div>
+              <div className="neck">
+                {Array.from({ length: 9 }, (_, index) => (
+                  <span className="fret" key={index} />
+                ))}
+                <span className="fret-dot fret-dot-one" />
+                <span className="fret-dot fret-dot-two" />
+              </div>
+              <div className="guitar-body">
+                <div className="body-shoulder body-shoulder-left" />
+                <div className="body-shoulder body-shoulder-right" />
+                <div className="soundhole" />
+                <div className="rosette" />
+                <div className="bridge" />
+              </div>
+              <div className="strings">
+                {guitarStrings.map((string, index) => (
+                  <button
+                    aria-label={string.id}
+                    className={`string string-${index + 1} ${activeString === string.id ? 'is-plucked' : ''}`}
+                    key={string.id}
+                    onClick={() => void playSound(string.id)}
+                    type="button"
+                  >
+                    <span>{string.key.toUpperCase()}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
       </section>
     </main>
