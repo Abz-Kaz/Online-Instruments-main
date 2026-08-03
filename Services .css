@@ -203,3 +203,402 @@ body {
 .service-section:nth-child(2) { animation-delay: 0.2s; }
 .service-section:nth-child(3) { animation-delay: 0.3s; }
 .service-section:nth-child(4) { animation-delay: 0.4s; }
+
+/* --- Instrument Previews Core Styles --- */
+.instrument-preview {
+    width: 100%;
+    max-width: 280px;
+    height: 180px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    background: #1e1e24;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+
+.service-section:hover .instrument-preview {
+    transform: scale(1.03);
+    box-shadow: 0 10px 24px rgba(32, 178, 170, 0.25);
+}
+
+/* --- Piano Preview Styles --- */
+.piano-preview {
+    background: radial-gradient(circle at center, #2c2c35 0%, #111115 100%);
+}
+
+.piano-casing {
+    background: #0f0f12;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 2px solid #333;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+
+.piano-keyboard {
+    display: flex;
+    position: relative;
+    background: #000;
+    padding: 2px;
+    border-radius: 3px;
+}
+
+.piano-key {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.1s, box-shadow 0.1s;
+}
+
+.piano-key.white {
+    width: 16px;
+    height: 70px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f3f3f3 85%, #d8d8d8 100%);
+    border-right: 1px solid #bbb;
+    border-bottom: 1px solid #aaa;
+    border-radius: 0 0 3px 3px;
+}
+
+.piano-key.white:last-child {
+    border-right: none;
+}
+
+.piano-key.white:hover {
+    background: linear-gradient(to bottom, #ffffff 0%, #e6e6e6 85%, #c0c0c0 100%);
+    transform: translateY(1.5px);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.piano-key.black {
+    width: 10px;
+    height: 42px;
+    background: linear-gradient(to bottom, #33333b 0%, #111115 70%, #000000 100%);
+    margin-left: -5px;
+    margin-right: -5px;
+    z-index: 5;
+    border-radius: 0 0 2px 2px;
+    box-shadow: 1px 2px 3px rgba(0,0,0,0.4);
+}
+
+.piano-key.black:hover {
+    background: linear-gradient(to bottom, #4f4f5a 0%, #25252b 70%, #111115 100%);
+    transform: translateY(1px);
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+}
+
+/* --- Drums Preview Styles --- */
+.drums-preview {
+    background: radial-gradient(circle at center, #2e241f 0%, #0f0b09 100%);
+}
+
+.drum-casing {
+    position: relative;
+    width: 220px;
+    height: 140px;
+}
+
+.drum-pad {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease, filter 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.drum-pad span {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    display: none;
+}
+
+.drum-pad:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+}
+
+.drum-pad:hover span {
+    display: block;
+}
+
+.drum-pad.crash-left {
+    width: 44px;
+    height: 44px;
+    background: radial-gradient(circle, #eec15c 10%, #bd8619 80%, #7d5204 100%);
+    border: 2px solid #ffbb00;
+    top: 5px;
+    left: 10px;
+}
+
+.drum-pad.crash-right {
+    width: 44px;
+    height: 44px;
+    background: radial-gradient(circle, #eec15c 10%, #bd8619 80%, #7d5204 100%);
+    border: 2px solid #ffbb00;
+    top: 5px;
+    right: 10px;
+}
+
+.drum-pad.tom1 {
+    width: 36px;
+    height: 36px;
+    background: radial-gradient(circle, #fcfcfc 40%, #e0e0e0 70%, #888888 100%);
+    border: 3px solid #ff4444;
+    top: 15px;
+    left: 62px;
+}
+
+.drum-pad.tom2 {
+    width: 36px;
+    height: 36px;
+    background: radial-gradient(circle, #fcfcfc 40%, #e0e0e0 70%, #888888 100%);
+    border: 3px solid #ff4444;
+    top: 15px;
+    right: 62px;
+}
+
+.drum-pad.snare {
+    width: 44px;
+    height: 44px;
+    background: radial-gradient(circle, #ffffff 50%, #d8d8d8 80%, #7f8c8d 100%);
+    border: 3px solid #34495e;
+    top: 65px;
+    left: 30px;
+}
+
+.drum-pad.hihat {
+    width: 38px;
+    height: 38px;
+    background: radial-gradient(circle, #f39c12 20%, #d35400 80%);
+    border: 2px solid #f1c40f;
+    top: 60px;
+    left: -5px;
+}
+
+.drum-pad.kick {
+    width: 58px;
+    height: 58px;
+    background: radial-gradient(circle, #2c3e50 30%, #000000 90%);
+    border: 3px solid #e74c3c;
+    top: 60px;
+    right: 25px;
+}
+
+/* --- Guitar Preview Styles --- */
+.guitar-preview {
+    background: radial-gradient(circle at center, #2e1d11 0%, #120904 100%);
+}
+
+.guitar-assembly {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 240px;
+    height: 120px;
+}
+
+.guitar-neck {
+    width: 140px;
+    height: 20px;
+    background: linear-gradient(to right, #8a5229 0%, #b87333 100%);
+    border: 1px solid #000;
+    border-radius: 2px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.guitar-fret {
+    width: 1px;
+    height: 100%;
+    background-color: #ffd700;
+    opacity: 0.6;
+}
+
+.guitar-strings {
+    position: absolute;
+    width: 100%;
+    height: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+    left: 0;
+    top: 4px;
+}
+
+.guitar-string {
+    height: 1px;
+    background: linear-gradient(to right, #ccc, #fff, #ccc);
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+}
+
+.guitar-body {
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, #d35400 20%, #ba4a00 50%, #5e2f0d 100%);
+    border: 2px solid #000;
+    border-radius: 50% 40% 40% 50%;
+    margin-left: -15px;
+    z-index: 5;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    transform: rotate(-5deg);
+}
+
+.guitar-soundhole {
+    width: 28px;
+    height: 28px;
+    background-color: #000000;
+    border: 2px solid #d35400;
+    border-radius: 50%;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+}
+
+@keyframes stringVibrate {
+    0% { transform: translateY(0); }
+    20% { transform: translateY(-1px); }
+    40% { transform: translateY(1px); }
+    60% { transform: translateY(-0.5px); }
+    80% { transform: translateY(0.5px); }
+    100% { transform: translateY(0); }
+}
+
+.service-section:hover .guitar-string {
+    animation: stringVibrate 0.12s linear infinite;
+}
+
+.service-section:hover .guitar-string:nth-child(2) { animation-delay: 0.02s; }
+.service-section:hover .guitar-string:nth-child(3) { animation-delay: 0.04s; }
+.service-section:hover .guitar-string:nth-child(4) { animation-delay: 0.06s; }
+.service-section:hover .guitar-string:nth-child(5) { animation-delay: 0.08s; }
+
+/* --- Harmonica Preview Styles --- */
+.harmonica-preview {
+    background: radial-gradient(circle at center, #1b263b 0%, #0d131f 100%);
+}
+
+.harmonica-casing {
+    display: flex;
+    align-items: center;
+    width: 220px;
+    height: 90px;
+    position: relative;
+}
+
+.harmonica-bracket {
+    width: 10px;
+    height: 60px;
+    background: linear-gradient(90deg, #718096 0%, #cbd5e0 50%, #4a5568 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.harmonica-bracket.left {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    margin-right: -2px;
+    z-index: 5;
+}
+
+.harmonica-bracket.right {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    margin-left: -2px;
+    z-index: 5;
+}
+
+.harmonica-mid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+}
+
+.harmonica-plate {
+    height: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #cbd5e0 25%, #718096 75%, #2d3748 100%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.harmonica-plate.top {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    font-size: 6px;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    color: rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    text-align: center;
+    line-height: 14px;
+    text-transform: uppercase;
+}
+
+.harmonica-plate.bottom {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.harmonica-comb {
+    background: linear-gradient(90deg, #8b4513 0%, #d35400 50%, #8b4513 100%);
+    display: flex;
+    padding: 3px 6px;
+    gap: 4px;
+    justify-content: space-between;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+}
+
+.harmonica-hole {
+    flex: 1;
+    height: 24px;
+    background: #111;
+    border: 1px solid #4a5568;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.harmonica-hole span {
+    font-size: 8px;
+    color: #555;
+    font-weight: bold;
+}
+
+.service-section:hover .harmonica-hole {
+    animation: holeLight 1s infinite alternate;
+}
+
+.service-section:hover .harmonica-hole:nth-child(2) { animation-delay: 0.1s; }
+.service-section:hover .harmonica-hole:nth-child(3) { animation-delay: 0.2s; }
+.service-section:hover .harmonica-hole:nth-child(4) { animation-delay: 0.3s; }
+.service-section:hover .harmonica-hole:nth-child(5) { animation-delay: 0.4s; }
+.service-section:hover .harmonica-hole:nth-child(6) { animation-delay: 0.5s; }
+.service-section:hover .harmonica-hole:nth-child(7) { animation-delay: 0.6s; }
+.service-section:hover .harmonica-hole:nth-child(8) { animation-delay: 0.7s; }
+
+@keyframes holeLight {
+    0% { background: #111; }
+    100% { background: #00d2ff; box-shadow: 0 0 5px #00d2ff; }
+}
+
+.harmonica-preview:hover {
+    filter: brightness(1.1);
+}
