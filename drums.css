@@ -210,3 +210,36 @@ body {
     width: 100%;
     bottom: 0;
 }
+/* Google AdSense Dev Visual Placeholder */
+.adsbygoogle:empty {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 90px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  position: relative;
+  margin: 30px auto;
+  max-width: 728px;
+  width: 90%;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.adsbygoogle:empty::before {
+  content: 'ADVERTISEMENT';
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 5px;
+}
+
+.adsbygoogle:empty::after {
+  content: 'Google AdSense (ca-pub-2576666615199262) - Active when deployed';
+  font-weight: bold;
+}
