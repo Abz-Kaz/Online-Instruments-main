@@ -173,8 +173,8 @@
         max-width: 100%;
       }
     }
-    /* Google AdSense Dev Visual Placeholder */
-    .adsbygoogle:empty {
+    /* Google AdSense Dev Visual Placeholder (AdBlocker Proof Wrapper) */
+    .partner-holder {
       display: flex !important;
       flex-direction: column;
       justify-content: center;
@@ -194,7 +194,7 @@
       box-sizing: border-box;
     }
 
-    .adsbygoogle:empty::before {
+    .partner-holder::before {
       content: 'ADVERTISEMENT';
       font-size: 9px;
       letter-spacing: 2px;
@@ -202,10 +202,22 @@
       margin-bottom: 5px;
     }
 
-    .adsbygoogle:empty::after {
+    .partner-holder::after {
       content: 'Google AdSense (ca-pub-2576666615199262) - Active when deployed';
       font-weight: bold;
     }
+
+    .partner-holder:has(iframe) {
+      background: transparent;
+      border: none;
+      min-height: auto;
+      margin: 0 auto;
+    }
+    .partner-holder:has(iframe)::before,
+    .partner-holder:has(iframe)::after {
+      display: none !important;
+    }
+
   </style>
 </head>
 <body>
@@ -238,7 +250,8 @@
     </form>
     </div>
     <!-- AdSense Banner -->
-    <ins class="adsbygoogle"
+    <div class="partner-holder">
+<ins class="adsbygoogle"
          style="display:block; margin-top:20px; width: 100%; max-width: 400px;"
          data-ad-client="ca-pub-2576666615199262"
          data-ad-slot="1234567890"
@@ -247,6 +260,7 @@
     <script>
          (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
+</div>
   </div>
 
   <script>
