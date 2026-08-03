@@ -1,0 +1,278 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #0d1217;
+  color: #fff;
+}
+
+.navbar {
+  background-color: #333;
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-list a {
+  text-decoration: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s, color 0.3s;
+  font-weight: bold;
+  display: block;
+}
+
+.nav-list a:hover {
+  background-color: #575757;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.header {
+  background-color: lightseagreen;
+  color: white;
+  text-align: center;
+  padding: 100px 20px 40px;
+  width: 100%;
+  background-image: linear-gradient(45deg, #20b2aa, #48d1cc);
+}
+
+.header h1 {
+  font-size: 2.5em;
+  margin: 0 0 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header p {
+  font-size: 1.2em;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 70px;
+}
+
+.page-harmonica {
+  background: radial-gradient(circle at center, #222e3a 0%, #0d1217 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.harmonica-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  padding: 40px 20px;
+}
+
+.harmonica-instructions {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 40px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.instruction-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.instruction-row:last-child {
+  margin-bottom: 0;
+}
+
+.inst-label {
+  font-weight: 600;
+  width: 110px;
+  font-size: 14px;
+  color: #a0aec0;
+}
+
+.keys-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.keys-row kbd {
+  background: #1a202c;
+  color: #e2e8f0;
+  border: 1px solid #4a5568;
+  border-bottom: 3px solid #4a5568;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.1s ease;
+}
+
+.keys-row kbd.active {
+  background: #00e5ff;
+  color: #000;
+  border-color: #00e5ff;
+  border-bottom-width: 1px;
+  transform: translateY(2px);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+.harmonica-instructions .instruction-row:last-child .keys-row kbd.active {
+  background: #ff9100;
+  color: #000;
+  border-color: #ff9100;
+  box-shadow: 0 0 10px rgba(255, 145, 0, 0.5);
+}
+
+.harmonica-body {
+  background: linear-gradient(180deg, #f7fafc 0%, #cbd5e0 40%, #718096 80%, #4a5568 100%);
+  border: 5px solid #2d3748;
+  border-radius: 20px;
+  padding: 15px 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.9);
+  width: 100%;
+}
+
+.harmonica-mouthpiece {
+  display: flex;
+  background: #1a202c;
+  border-radius: 12px;
+  padding: 10px;
+  gap: 10px;
+  justify-content: space-between;
+  overflow-x: auto;
+}
+
+.harmonica-hole {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 60px;
+  background: #111;
+  border: 2px solid #2d3748;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.hole-label {
+  font-weight: bold;
+  font-size: 18px;
+  color: #718096;
+  margin: 8px 0;
+  user-select: none;
+}
+
+.reed-btn {
+  width: 100%;
+  height: 50px;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 6px;
+  color: #e2e8f0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.1s ease;
+}
+
+.reed-btn .action {
+  font-size: 9px;
+  opacity: 0.6;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.reed-btn .note {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.reed-btn.blow:hover {
+  background: #00bcd4;
+  color: #000;
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
+}
+
+.reed-btn.draw:hover {
+  background: #ff9800;
+  color: #000;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+}
+
+.reed-btn.active-blow {
+  background: #00e5ff !important;
+  color: #000 !important;
+  border-color: #00e5ff;
+  box-shadow: 0 0 20px #00e5ff, inset 0 0 4px rgba(255, 255, 255, 0.8);
+  transform: scale(0.96);
+}
+
+.reed-btn.active-draw {
+  background: #ff9100 !important;
+  color: #000 !important;
+  border-color: #ff9100;
+  box-shadow: 0 0 20px #ff9100, inset 0 0 4px rgba(255, 255, 255, 0.8);
+  transform: scale(0.96);
+}
+
+.footer {
+  background-color: cadetblue;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 10;
+}
+
+@media screen and (max-width: 768px) {
+  .harmonica-mouthpiece {
+    gap: 6px;
+    padding: 6px;
+  }
+  .harmonica-hole {
+    min-width: 50px;
+    padding: 4px;
+  }
+  .reed-btn {
+    height: 40px;
+  }
+  .reed-btn .note {
+    font-size: 11px;
+  }
+  .hole-label {
+    font-size: 14px;
+    margin: 4px 0;
+  }
+}

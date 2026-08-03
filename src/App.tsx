@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 
-type Page = 'home' | 'about' | 'services' | 'contact' | 'piano' | 'drums' | 'guitar' | 'login' | 'register';
+type Page = 'home' | 'about' | 'services' | 'contact' | 'piano' | 'drums' | 'guitar' | 'harmonica' | 'login' | 'register';
 
 type NavItem = {
   label: string;
@@ -32,6 +32,8 @@ const routeMap: Record<string, Page> = {
   '/drums.html': 'drums',
   '/guitar': 'guitar',
   '/guitar.html': 'guitar',
+  '/harmonica': 'harmonica',
+  '/harmonica.html': 'harmonica',
   '/login': 'login',
   '/login.html': 'login',
   '/register': 'register',
@@ -42,6 +44,7 @@ const instrumentCards = [
   { title: 'Piano', image: '/img/Piano.png', page: 'piano' as Page, className: 'image-container' },
   { title: 'Drums', image: '/img/Drums.png', page: 'drums' as Page, className: 'Drums-container' },
   { title: 'Guitar', image: '/img/Guitar.png', page: 'guitar' as Page, className: 'Guitar-container' },
+  { title: 'Harmonica', image: '/img/harmonica.jpg', page: 'harmonica' as Page, className: 'Harmonica-container' },
 ];
 
 const pianoKeys = [
@@ -320,15 +323,15 @@ function App() {
       {page === 'piano' && <Piano />}
       {page === 'drums' && <Drums />}
       {page === 'guitar' && <Guitar />}
+      {page === 'harmonica' && <Harmonica />}
       {page === 'login' && <Login />}
       {page === 'register' && <Register />}
       {page !== 'login' && page !== 'register' && (
-        <Footer text={page === 'drums' || page === 'guitar' ? 'My Website' : 'Rhythm Realm'} />
+        <Footer text={page === 'drums' || page === 'guitar' || page === 'harmonica' ? 'My Website' : 'Rhythm Realm'} />
       )}
     </>
   );
 }
-
 function Nav() {
   return (
     <nav className="navbar">
@@ -447,6 +450,13 @@ function Services() {
             text: 'Strum, pick, and shred on our digital guitar. With various sound options and effects, you can explore different styles and techniques from classical to rock.',
             link: 'Try Guitar',
             page: 'guitar' as Page,
+          },
+          {
+            title: 'Digital Harmonica',
+            image: '/img/harmonica.jpg',
+            text: 'Play the blues or folk tunes with our digital diatonic harmonica. Synthesizing rich reed tones with precise blowing and drawing frequencies.',
+            link: 'Try Harmonica',
+            page: 'harmonica' as Page,
           },
         ].map((service) => (
           <article className="service-section" key={service.title}>
@@ -1129,6 +1139,190 @@ function Guitar() {
               </div>
             </div>
           </section>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+const harmonicaHoles = [
+  { hole: 1, blowNote: 'C4', blowFreq: 261.63, blowKey: '1', drawNote: 'D4', drawFreq: 293.66, drawKey: 'q' },
+  { hole: 2, blowNote: 'E4', blowFreq: 329.63, blowKey: '2', drawNote: 'G4', drawFreq: 392.00, drawKey: 'w' },
+  { hole: 3, blowNote: 'G4', blowFreq: 392.00, blowKey: '3', drawNote: 'B4', drawFreq: 493.88, drawKey: 'e' },
+  { hole: 4, blowNote: 'C5', blowFreq: 523.25, blowKey: '4', drawNote: 'D5', drawFreq: 587.33, drawKey: 'r' },
+  { hole: 5, blowNote: 'E5', blowFreq: 659.25, blowKey: '5', drawNote: 'F5', drawFreq: 698.46, drawKey: 't' },
+  { hole: 6, blowNote: 'G5', blowFreq: 783.99, blowKey: '6', drawNote: 'A5', drawFreq: 880.00, drawKey: 'y' },
+  { hole: 7, blowNote: 'C6', blowFreq: 1046.50, blowKey: '7', drawNote: 'B5', drawFreq: 987.77, drawKey: 'u' },
+  { hole: 8, blowNote: 'E6', blowFreq: 1318.51, blowKey: '8', drawNote: 'D6', drawFreq: 1174.66, drawKey: 'i' },
+  { hole: 9, blowNote: 'G6', blowFreq: 1567.98, blowKey: '9', drawNote: 'F6', drawFreq: 1396.91, drawKey: 'o' },
+  { hole: 10, blowNote: 'C7', blowFreq: 2093.00, blowKey: '0', drawNote: 'A6', drawFreq: 1760.00, drawKey: 'p' },
+];
+
+function Harmonica() {
+  const [activeNotes, setActiveNotes] = useState<Record<string, boolean>>({});
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const activeOscillatorsRef = useRef<Record<string, { osc: OscillatorNode; subOsc: OscillatorNode; gain: GainNode }>>({});
+
+  const playNote = (freq: number, noteId: string) => {
+    if (activeOscillatorsRef.current[noteId]) return;
+
+    if (!audioContextRef.current) {
+      const contextClass = window.AudioContext ?? (window as any).webkitAudioContext;
+      if (contextClass) {
+        audioContextRef.current = new contextClass();
+      }
+    }
+    const ctx = audioContextRef.current;
+    if (!ctx) return;
+    if (ctx.state === 'suspended') {
+      void ctx.resume();
+    }
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+    const subOsc = ctx.createOscillator();
+    subOsc.type = 'triangle';
+    subOsc.frequency.setValueAtTime(freq * 2, ctx.currentTime);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1400, ctx.currentTime);
+    filter.Q.setValueAtTime(1.2, ctx.currentTime);
+
+    const gainNode = ctx.createGain();
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.04);
+
+    osc.connect(filter);
+    subOsc.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    osc.start();
+    subOsc.start();
+
+    activeOscillatorsRef.current[noteId] = { osc, subOsc, gain: gainNode };
+    setActiveNotes(prev => ({ ...prev, [noteId]: true }));
+  };
+
+  const stopNote = (noteId: string) => {
+    const active = activeOscillatorsRef.current[noteId];
+    if (active) {
+      const ctx = audioContextRef.current;
+      if (ctx) {
+        active.gain.gain.cancelScheduledValues(ctx.currentTime);
+        active.gain.gain.setValueAtTime(active.gain.gain.value, ctx.currentTime);
+        active.gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        const osc = active.osc;
+        const subOsc = active.subOsc;
+        setTimeout(() => {
+          try {
+            osc.stop();
+            subOsc.stop();
+          } catch (e) {}
+        }, 200);
+      }
+      delete activeOscillatorsRef.current[noteId];
+      setActiveNotes(prev => ({ ...prev, [noteId]: false }));
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat) return;
+      const key = e.key.toLowerCase();
+      harmonicaHoles.forEach(h => {
+        if (h.blowKey === key) {
+          playNote(h.blowFreq, `blow-${h.hole}`);
+        }
+        if (h.drawKey === key) {
+          playNote(h.drawFreq, `draw-${h.hole}`);
+        }
+      });
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      harmonicaHoles.forEach(h => {
+        if (h.blowKey === key) {
+          stopNote(`blow-${h.hole}`);
+        }
+        if (h.drawKey === key) {
+          stopNote(`draw-${h.hole}`);
+        }
+      });
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      Object.keys(activeOscillatorsRef.current).forEach(stopNote);
+    };
+  }, []);
+
+  return (
+    <main className="page page-harmonica">
+      <header className="header">
+        <h1>Digital Harmonica</h1>
+        <p>Key of C Diatonic</p>
+      </header>
+
+      <section className="harmonica-wrapper">
+        <div className="harmonica-instructions">
+          <div className="instruction-row">
+            <span className="inst-label">Blow Keys:</span>
+            <div className="keys-row">
+              {harmonicaHoles.map(h => (
+                <kbd key={`blow-kbd-${h.hole}`} className={activeNotes[`blow-${h.hole}`] ? 'active' : ''}>{h.blowKey}</kbd>
+              ))}
+            </div>
+          </div>
+          <div className="instruction-row">
+            <span className="inst-label">Draw Keys:</span>
+            <div className="keys-row">
+              {harmonicaHoles.map(h => (
+                <kbd key={`draw-kbd-${h.hole}`} className={activeNotes[`draw-${h.hole}`] ? 'active' : ''}>{h.drawKey}</kbd>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="harmonica-body">
+          <div className="harmonica-mouthpiece">
+            {harmonicaHoles.map(h => (
+              <div key={`hole-${h.hole}`} className="harmonica-hole">
+                <button
+                  type="button"
+                  className={`reed-btn blow ${activeNotes[`blow-${h.hole}`] ? 'active-blow' : ''}`}
+                  onMouseDown={() => playNote(h.blowFreq, `blow-${h.hole}`)}
+                  onMouseUp={() => stopNote(`blow-${h.hole}`)}
+                  onMouseLeave={() => stopNote(`blow-${h.hole}`)}
+                  onTouchStart={(e) => { e.preventDefault(); playNote(h.blowFreq, `blow-${h.hole}`); }}
+                  onTouchEnd={() => stopNote(`blow-${h.hole}`)}
+                >
+                  <span className="action">Blow</span>
+                  <span className="note">{h.blowNote}</span>
+                </button>
+                <div className="hole-label">{h.hole}</div>
+                <button
+                  type="button"
+                  className={`reed-btn draw ${activeNotes[`draw-${h.hole}`] ? 'active-draw' : ''}`}
+                  onMouseDown={() => playNote(h.drawFreq, `draw-${h.hole}`)}
+                  onMouseUp={() => stopNote(`draw-${h.hole}`)}
+                  onMouseLeave={() => stopNote(`draw-${h.hole}`)}
+                  onTouchStart={(e) => { e.preventDefault(); playNote(h.drawFreq, `draw-${h.hole}`); }}
+                  onTouchEnd={() => stopNote(`draw-${h.hole}`)}
+                >
+                  <span className="action">Draw</span>
+                  <span className="note">{h.drawNote}</span>
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </main>
