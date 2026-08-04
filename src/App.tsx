@@ -441,14 +441,14 @@ function Services() {
           },
           {
             title: 'Virtual Drums',
-            image: '/img/Drums.png',
+            image: '/img/Drums.jpg',
             text: "Beat out rhythms and create dynamic percussion with our virtual drum kit. Featuring multiple drum pads and cymbals, it's a great way to practice or lay down beats.",
             link: 'Try Drums',
             page: 'drums' as Page,
           },
           {
             title: 'Digital Guitar',
-            image: '/img/Guitar.png',
+            image: '/img/Guitar.jpg',
             text: 'Strum, pick, and shred on our digital guitar. With various sound options and effects, you can explore different styles and techniques from classical to rock.',
             link: 'Try Guitar',
             page: 'guitar' as Page,
