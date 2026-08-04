@@ -42,8 +42,8 @@ const routeMap: Record<string, Page> = {
 
 const instrumentCards = [
   { title: 'Piano', image: '/img/Piano.png', page: 'piano' as Page, className: 'image-container' },
-  { title: 'Drums', image: '/img/Drums.png', page: 'drums' as Page, className: 'Drums-container' },
-  { title: 'Guitar', image: '/img/Guitar.png', page: 'guitar' as Page, className: 'Guitar-container' },
+  { title: 'Drums', image: '/img/Drums.jpg', page: 'drums' as Page, className: 'Drums-container' },
+  { title: 'Guitar', image: '/img/Guitar.jpg', page: 'guitar' as Page, className: 'Guitar-container' },
   { title: 'Harmonica', image: '/img/harmonica.jpg', page: 'harmonica' as Page, className: 'Harmonica-container' },
 ];
 
