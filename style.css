@@ -7,17 +7,26 @@
   font-family: 'Poppins', sans-serif;
 }
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  padding-top: 80px;
+  font-family: Arial, sans-serif;
   background: #a6fff3;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 .wrapper {
   padding: 35px 40px;
   border-radius: 20px;
   background: #141414;
-}
+
+  margin: auto 0;
+  flex-shrink: 0;}
 .wrapper header {
   display: flex;
   color: #B2B2B2;
@@ -119,8 +128,12 @@ header input {
 
 @media screen and (max-width: 815px) {
   .wrapper {
-    padding: 25px;
-  }
+  padding: 35px 40px;
+  border-radius: 20px;
+  background: #141414;
+
+  margin: auto 0;
+  flex-shrink: 0;}
   header {
     flex-direction: column;
   }
@@ -202,10 +215,13 @@ header input {
   background-color: cadetblue;
   color: white;
   text-align: center;
-  padding: 10px;
-  position: fixed;
+  padding: 15px 10px;
+  position: relative;
   width: 100%;
-  bottom: 0;
+  margin-top: auto;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  z-index: 10;
 }
 .adsbygoogle:empty::before {
   content: 'ADVERTISEMENT';
@@ -268,10 +284,5 @@ header input {
 
 /* Fix stretching by extracting ad container from flex flow */
 .partner-holder {
-  position: fixed !important;
-  bottom: 50px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 100 !important;
-  margin: 0 !important;
+  
 }

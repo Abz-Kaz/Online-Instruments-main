@@ -6,9 +6,17 @@
 
 body {
   margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background-color: #0d1217;
+  padding: 0;
+  padding-top: 80px;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle, #222 0%, #111 100%);
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .navbar {
@@ -163,7 +171,9 @@ body {
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-sizing: border-box;
-}
+
+  margin: auto 0;
+  flex-shrink: 0;}
 
 .harmonica-metal-casing {
   display: flex;
@@ -348,10 +358,12 @@ body {
   background-color: cadetblue;
   color: white;
   text-align: center;
-  padding: 10px;
-  position: fixed;
+  padding: 15px 10px;
+  position: relative;
   width: 100%;
-  bottom: 0;
+  margin-top: auto;
+  box-sizing: border-box;
+  flex-shrink: 0;
   z-index: 10;
 }
 
@@ -437,10 +449,5 @@ body {
 
 /* Fix stretching by extracting ad container from flex flow */
 .partner-holder {
-  position: fixed !important;
-  bottom: 50px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 100 !important;
-  margin: 0 !important;
+  
 }
