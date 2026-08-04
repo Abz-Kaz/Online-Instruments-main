@@ -1811,3 +1811,14 @@ button {
 .page-harmonica .partner-holder::before {
   color: rgba(255, 255, 255, 0.5);
 }
+
+/* Fix stretching inside React SPA by extracting ad container from flex flow */
+.instrument-page .partner-holder,
+.page-harmonica .partner-holder {
+  position: fixed !important;
+  bottom: 60px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 100 !important;
+  margin: 0 !important;
+}

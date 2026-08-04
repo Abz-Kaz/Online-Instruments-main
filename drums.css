@@ -268,3 +268,13 @@ body {
 .partner-holder:has(iframe)::after {
   display: none !important;
 }
+
+/* Fix stretching by extracting ad container from flex flow */
+.partner-holder {
+  position: fixed !important;
+  bottom: 50px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 100 !important;
+  margin: 0 !important;
+}
