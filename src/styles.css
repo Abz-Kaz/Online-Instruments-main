@@ -944,20 +944,6 @@ button {
     pointer-events: none;
 }
 
-.kick::after {
-    content: 'Rhythm Realm';
-    font-family: 'Georgia', serif;
-    font-weight: bold;
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: rgba(255, 255, 255, 0.15);
-    text-transform: uppercase;
-    position: absolute;
-    bottom: 30px;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
-}
-
-
 /* Snare Drum */
 .snare {
     width: 155px;
