@@ -142,7 +142,7 @@ body {
   font-weight: bold;
 }
 
-/* Google AdSense Dev Visual Placeholder (AdBlocker Proof Wrapper) */
+/* Google AdSense Dev Visual Placeholder (AdBlocker Proof Wrapper) - Dark Mode */
 .partner-holder {
   display: flex !important;
   flex-direction: column;
@@ -150,25 +150,26 @@ body {
   align-items: center;
   min-height: 90px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
   position: relative;
   margin: 30px auto;
   max-width: 728px;
   width: 90%;
-  color: rgba(255, 255, 255, 0.5);
+  color: #e2e8f0; /* Light text for high contrast on dark backgrounds */
   font-family: Arial, sans-serif;
-  font-size: 12px;
-  padding: 10px;
+  font-size: 13px;
+  padding: 15px;
   box-sizing: border-box;
 }
 
 .partner-holder::before {
   content: 'ADVERTISEMENT';
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.3);
-  margin-bottom: 5px;
+  color: rgba(255, 255, 255, 0.5); /* High contrast */
+  font-weight: bold;
+  margin-bottom: 6px;
 }
 
 .partner-holder::after {
